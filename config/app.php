@@ -175,6 +175,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        App\Providers\FrontMenuServiceProvider::class,
+        App\Providers\BreadCrumbServiceProvider::class,
+        App\Providers\LanguageMenuServiceProvider::class,
     ],
 
     /*
