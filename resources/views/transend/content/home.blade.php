@@ -1,9 +1,7 @@
 @extends('master_layouts.master')
-@section('first_section')
-	{!! $homeRecentSection !!}
-@endsection
-@section('first_side_section')
-	{!! $trendingArticles  !!}
+
+@section('content')
+	@include('master_layouts.featured_post')
 @endsection
 
 @section('second_section')
@@ -12,7 +10,9 @@
 @section('second_side_section')
 	{!! $howToArticles !!}
 @endsection
-
+@section('news_letter')
+	@include('contents.news_letter')
+@endsection
 @section('third_section')
 	{!! $homePopularSection !!}
 @endsection

@@ -26,23 +26,7 @@
     <!-- ##### Hero Area End ##### -->
 
     <!-- ##### Featured Post Area Start ##### -->
-    <div class="featured-post-area">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-8">
-                    <div class="row">
-                        @yield('first_section')
-                        {{-- @include('master_layouts.first_section') --}}
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <!-- Single Featured Post -->
-                    @yield('first_side_section')
-                    {{-- @include('master_layouts.first_side_section') --}}
-                </div>
-            </div>
-        </div>
-    </div>
+        @yield('content')
     <!-- ##### Featured Post Area End ##### -->
     <!-- ##### Popular News Area Start ##### -->
     <div class="popular-news-area section-padding-80-50">
@@ -55,7 +39,7 @@
                 <div class="col-12 col-lg-4">
                     @yield('second_side_section')
                     {{-- @include('master_layouts.second_side_section') --}}
-                    @include('contents.news_letter')
+                    @yield('news_letter')
                 </div>
             </div>
         </div>

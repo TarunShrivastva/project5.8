@@ -33,6 +33,8 @@ class CategoryPageController extends Controller
             $$key = $value;
         }
         $locale = str_replace('/', '', $request->route()->getPrefix());
+        App::setLocale($locale);
+
         if(isset($content)){
             if($content != ''){
                 $content = Content::where('status','1')->where('url', '=', $content)->get();
@@ -47,7 +49,7 @@ class CategoryPageController extends Controller
         if(count($content)==0){
             return abort(404);
         }
-        if(isset($category)){ 
+        if(isset($category)){
             if(!empty($category)){
                 $category = Category::where('status','1')->where('url', '=', $category)->get();
                 if(count($category) ==0){
@@ -55,22 +57,33 @@ class CategoryPageController extends Controller
                 }    
             }
         }
-        $articles = array();
-        $recentArticles = $this->recentArticles();
-        $trendingArticles = $this->trendingArticles();
+        
+        $howToArticles = $this->howToArticles();
+        $categorySideSection = $this->categorySideContent();
         if(count($content) >0 ){
-             if(isset($category) && !empty($category) && count($category)>0){
-                $articles = Article::where('status','1')->where('category_id','=',$category[0]->id)->where('content_id','=',$content[0]->id)->where('language_id','=',$language[0]->id)->with('author','content','category','language')->paginate(8);
-                return view('transend.content.category.subCatContent',compact('articles','recentArticles','trendingArticles','device'));    
-            }else{
-                $articles = Article::where('status','1')->where('content_id','=',$content[0]->id)->where('language_id',$language[0]->id)->with('author','content')->paginate(8);
-                return view('transend.content.category.mainContent',compact('articles','recentArticles','trendingArticles','device'));
+            if(isset($category) && !empty($category) && count($category)>0){
+                $categorySection = $this->categoryContent($content, $language, $category);
+                return view('transend.content.category_content',compact('howToArticles','categorySection', 'categorySideSection','single'));
             }
+            $categorySection = $this->categoryContent($content,$language);
+            return view('transend.content.category_content',compact('howToArticles','trendingArticles','categorySection', 'categorySideSection','single'));
         }else{
            return abort(404); 
         }
-        return view('transend.content.category.mainContent',compact('articles','recentArticles','trendingArticles','device'));
     }
+
+    public function categoryContent($content, $language, $category=null, $count=8,$single =0)
+    {
+        $articles = Article::where('status','1')->where('content_id','=',$content[0]->id)->where('language_id','=',$language[0]->id)->with('author','content','category','language')->paginate($count);
+        return view('contents.category_section',compact('articles', 'single'));
+    }
+
+    public function categorySideContent()
+    {
+        $trendingArticles = $this->trendingArticles();
+        return view('contents.category_side_section',compact('trendingArticles'));
+    }
+
 
     /**
      * Display the specified resource.
@@ -81,6 +94,7 @@ class CategoryPageController extends Controller
     public function show(Request $request)
     {
         $parameters = $request->route()->parameters();
+        $single = 1;
         foreach ($parameters as $key => $value) {
             $$key = $value;
         }
@@ -102,27 +116,28 @@ class CategoryPageController extends Controller
                 $articles = Article::where('status','1')->where('category_id','=',$category[0]->id)->where('content_id','=',$content[0]->id)->where('language_id',$language[0]->id)->with('author','content','category','language')->findOrFail($id);
             }
         }
-        $recentArticles = $this->recentArticles($articles->id);
-        $trendingArticles = $this->trendingArticles($articles->id);
+        $howToArticles = $this->howToArticles();
+        $categorySideSection = $this->categorySideContent();
         if(Str::lower($articles->alias) == Str::lower($alias)){
-            return view('transend.content.category.singleArticle',compact('articles','recentArticles','trendingArticles'));
+            $categorySection = $this->categoryContent($content, $language, $category, 1, $single);
+            return view('transend.content.category_content',compact('howToArticles','categorySection', 'categorySideSection'));
         }else{
             return redirect()->route('single-article',[$category, $subcategory, $articles->alias, $id]);
         }
     }
 
-    public function recentArticles($id=null){
+    public function trendingArticles($id=null){
         $locale = App::getLocale();
         $language = Language::where('alias',$locale)->get();
         $trendingArticles = Article::where('status','1')->where('language_id','=',$language[0]->id)->where('recent','1')->where('id','!=',$id)->take(5)->get();
         return view('contents.first_side_section',compact('trendingArticles'));
     }
 
-    public function trendingArticles($id=null){
+    public function howToArticles($id=null){
         $locale = App::getLocale();
         $language = Language::where('alias',$locale)->get();
         $howToArticles = Article::where('status','1')->where('language_id','=',$language[0]->id)->where('feature','1')->where('id','!=',$id)->take(5)->get();
-        return view('content.second_side_section',compact('howToArticles'));
+        return view('contents.second_side_section',compact('howToArticles'));
     }
 
     public function about(){
