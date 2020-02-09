@@ -25,10 +25,95 @@
     </div>
 </div>
 @endforeach
-@if($single == 0)
+@if ($single == 0)
     <nav aria-label="Page navigation example">
         <ul class="pagination mt-50">
             {{ $articles->links() }}
         </ul>
     </nav>
+@elseif($single == 1)
+    @php $article = '' @endphp
+    @foreach($articles as $value)
+        @php $article = $value @endphp
+    @endforeach
+    <!-- Comment Area Start -->
+    <div class="comment_area clearfix">
+        <h5 class="title">{{ count($article->comments) }} Comments</h5>
+        <ol>
+            @foreach($article->comments as $comment)
+            <!-- Single Comment Area -->
+            <li class="single_comment_area">
+                <!-- Comment Content -->
+                <div class="comment-content d-flex">
+                    <!-- Comment Author -->
+                    {{-- <div class="comment-author">
+                        <img src="img/bg-img/30.jpg" alt="author">
+                    </div> --}}
+                    <!-- Comment Meta -->
+                    <div class="comment-meta">
+                        <a href="#" class="post-author">{{ $comment->user->name }}</a>
+                        <a href="#" class="post-date">
+                        {{ ($comment->created_at >= $comment->updated_at)?date('d-M-y', strtotime($comment->created_at)) : date('d-M-y', strtotime($comment->updated_at)) }}
+                        </a>
+                        <p>{{ $comment->comment }}</p>
+                    </div>
+                </div>
+            </li>
+            @endforeach
+        </ol>
+    </div>
 @endif
+@if (!(Auth::check()))
+                    <div class="contact-form-area">    
+                        <div class="post-a-comment-area section-padding-80-0">
+                            <h4>Login For a comment</h4>    
+                            <!-- Reply Form -->
+                            <div class="contact-form-area">
+                                <form action="{{ route('login') }}" method="post">
+                                    {{ csrf_field() }}
+                                    <div class="row">
+                                        <div class="col-12 col-lg-6{{ $errors->has('email') ? ' has-error' : '' }}">
+                                            <input type="email" class="form-control" id="email" placeholder="Email*" name="email" value="{{ old('email') }}">
+                                            @if ($errors->has('email'))
+                                                <span class="help-block">
+                                                    <p style="color:red">{{ $errors->first('email') }}</p>
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="col-12 col-lg-6{{ $errors->has('password') ? ' has-error' : '' }}">
+                                            <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                                            @if ($errors->has('password'))
+                                                <span class="help-block">
+                                                    <p style="color:red">{{ $errors->first('password') }}</p>
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <button class="btn newspaper-btn mt-30 w-100" type="submit">Login To Comment</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="contact-form-area">    
+                        <div class="post-a-comment-area section-padding-80-0">
+                            <h4>Leave a comment</h4>    
+                            <!-- Reply Form -->
+                            <div class="contact-form-area">
+                                <form action="{{ route('add_comment',['article_id' => $articles->id]) }}" method="POST">
+                                    {{ csrf_field() }}
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <textarea name="comment" class="form-control" id="comment" cols="30" rows="10" placeholder="Comment"></textarea>
+                                        </div>
+                                        <div class="col-12 text-center">
+                                            <button class="btn newspaper-btn mt-30 w-100" type="submit">Add Comment</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>                    
+                @endif

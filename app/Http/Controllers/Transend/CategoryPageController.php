@@ -14,11 +14,31 @@ use App\Admin\Models\Language;
 use App\Admin\Models\Comment;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Lang;
+
+use App\Admin\Traits\Parameter;
+use App\Admin\Traits\LanguageSet;
+use App\Admin\Repositories\Interfaces\ArticleRepositoryInterface;
+use App\Admin\Repositories\Interfaces\ContentRepositoryInterface;
+use App\Admin\Repositories\Interfaces\CategoryRepositoryInterface;
 // use Jenssegers\Agent\Agent;
 
 
 class CategoryPageController extends Controller
 {
+    use Parameter, LanguageSet;
+
+    protected $article, $content, $category;
+    
+    public function __construct(ArticleRepositoryInterface $article,
+        ContentRepositoryInterface $content,
+        CategoryRepositoryInterface $category
+        )
+    {
+        $this->article = $article;
+        $this->content = $content;
+        $this->category = $category;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -28,13 +48,16 @@ class CategoryPageController extends Controller
     {
         // $agent = new Agent();
         // $device = $agent->isMobile();
-        $parameters = $request->route()->parameters();
-        foreach ($parameters as $key => $value) {
-            $$key = $value;
-        }
-        $locale = str_replace('/', '', $request->route()->getPrefix());
-        App::setLocale($locale);
-
+        $parameters = $this->getParameters();
+        $contentName = isset($parameters['content'])?$parameters['content']:null;
+        $categoryName = isset($parameters['category'])?$parameters['category']:null;
+        $locale = $this->setLanguage();
+        
+        // $article = $this->article->getById();
+        $contentID  = $this->content->IdByContentTypeName($contentName);
+        $categoryID = $this->category->IdByCategoryName($categoryName);
+        
+        dd($contentID, $categoryID);
         if(isset($content)){
             if($content != ''){
                 $content = Content::where('status','1')->where('url', '=', $content)->get();
@@ -74,7 +97,7 @@ class CategoryPageController extends Controller
 
     public function categoryContent($content, $language, $category=null, $count=8,$single =0)
     {
-        $articles = Article::where('status','1')->where('content_id','=',$content[0]->id)->where('language_id','=',$language[0]->id)->with('author','content','category','language')->paginate($count);
+        $articles = Article::where('status','1')->where('content_id','=',$content[0]->id)->where('language_id','=',$language[0]->id)->with('author','content','category','language','comments')->paginate($count);
         return view('contents.category_section',compact('articles', 'single'));
     }
 

@@ -178,6 +178,7 @@ return [
         App\Providers\FrontMenuServiceProvider::class,
         App\Providers\BreadCrumbServiceProvider::class,
         App\Providers\LanguageMenuServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ],
 
     /*

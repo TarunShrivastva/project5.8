@@ -30,3 +30,7 @@ Route::group(['prefix' => 'hi' ], function () {
 	Route::GET('{content}/{category?}','Transend\CategoryPageController@index');
 	Route::GET('{content}/{category}/{alias}-{id}','Transend\CategoryPageController@show')->where(['id' => '[0-9]+', 'alias' => '[a-z0-9,-]+']);
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
