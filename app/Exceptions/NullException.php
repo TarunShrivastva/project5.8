@@ -6,13 +6,14 @@ use Exception;
 
 class NullException extends Exception
 {
-    public function render($request, Exception $exception)
+    public function render($exception)
     {
-    	dd('1', $exception);
+     	// dd($exception);
     }
 
-    public function report(Exception $exception)
+    public function report()
     {
-    	dd('2', $exception);
+    	dd('1');
+    	\Log::debug('Category Cannot Be Null');
     }
 }

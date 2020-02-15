@@ -4,6 +4,7 @@ namespace App\Admin\Repositories;
 
 use App\Admin\Repositories\Interfaces\ContentRepositoryInterface;
 use App\Admin\Models\Contenttype as Content;
+use Exception;
 
 class ContentRepository implements ContentRepositoryInterface
 {
@@ -20,7 +21,11 @@ class ContentRepository implements ContentRepositoryInterface
 
     public function IdByContentTypeName($content)
     {
-        $contentID = Content::where('content_type_name', $content)->where('status','1')->first('id')->toArray();
-        return isset($contentID['id'])?$contentID['id']:0;
+        try{
+            $contentID = Content::where('content_type_name', $content)->where('status','1')->firstOrFail('id')->toArray();
+            return isset($contentID['id'])?$contentID['id']:0;
+        }catch(Exception $exception){
+            return 0;
+        }
     }
 }

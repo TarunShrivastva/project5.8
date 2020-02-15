@@ -4,7 +4,13 @@ namespace App\Admin\Repositories\Interfaces;
 
 interface ArticleRepositoryInterface
 {
-    public function all();
+    public function get();
 
     public function getById($id);
+
+    public function getByContent($id);
+
+    public function getByCategory($id);
+
+    public function getByLanguage($id);
 }

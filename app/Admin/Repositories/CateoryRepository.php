@@ -20,14 +20,20 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::where('id', $id)->get();
     }
 
-    public function IdByCategoryName($category)
+    public function IdByCategoryName($category=null)
     {
     	try{
-	    	$categoryID = Category::where('name', $category)->where('status',1)->firstOrFail('id')->toArray();
-	        return isset($categoryID['id'])?$categoryID['id']:0;
-    	}catch(Exception $exception){
-    		// $response = $this->renderException($request, $exception);
-    		throw new NullException($exception);
-    	}
+            $categoryID = Category::where('name', $category)->where('status',1)->firstOrFail('id')->toArray();
+            return isset($categoryID['id'])?$categoryID['id']:0;    
+        }catch(Exception $exception){
+            return 0;
+        }
+        
+        //  try{
+    	//  }
+        //  catch(NullException $exception){
+    	// 	   render($exception);
+        //      return back()->withError('category not found');
+    	//  }
     }	
 }

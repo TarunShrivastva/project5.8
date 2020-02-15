@@ -2,6 +2,7 @@
 
 namespace App\Admin\Traits;
 use App;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * @deprecated
@@ -17,6 +18,6 @@ trait LanguageSet
     {
         $locale = str_replace('/', '', request()->route()->getPrefix());
         App::setLocale($locale);
-        return $locale;
+        return strtolower($locale);
     }
 }

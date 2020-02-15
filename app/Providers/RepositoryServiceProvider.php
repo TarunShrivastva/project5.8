@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App;
+use App\Admin\Repositories\Interfaces;
+use App\Admin\Repositories;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -14,22 +16,14 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // $models = [
-        //     'Role',
-        //     'User',
-        // ];
+        $models = ['Article','Content','Category','Language'];
 
-        // foreach ($models as $model) {
-        //     $this->app->bind(
-        //         "App\Contracts\\{$model}Interface",
-        //         "App\Repositories\\{$model}Repository"
-        //     );
-        // }
-
-
-        App::bind('App\Admin\Repositories\Interfaces\ArticleRepositoryInterface', 'App\Admin\Repositories\ArticleRepository');
-        App::bind('App\Admin\Repositories\Interfaces\ContentRepositoryInterface', 'App\Admin\Repositories\ContentRepository');
-        App::bind('App\Admin\Repositories\Interfaces\CategoryRepositoryInterface', 'App\Admin\Repositories\CategoryRepository');
+        foreach($models as $model){
+            App::bind(
+                "App\Admin\Repositories\Interfaces\\{$model}RepositoryInterface",
+                "App\Admin\Repositories\\{$model}Repository"
+            );
+        }
     }
 
     /**
