@@ -54,7 +54,7 @@ class CategoryPageController extends Controller
         $contentID  = $this->content->IdByContentTypeName($contentName);
         $languageID = $this->language->IdByLanguageAlias($alias);
         $categoryID = $this->category->IdByCategoryName($categoryName);
-        $howToArticles = $this->howToArticles();
+        // $howToArticles = $this->howToArticles();
         // $categoryContent = $this->categoryContent();
         // $categorySideSection = $this->categorySideContent();
             if($categoryID){
