@@ -5,7 +5,7 @@
                     {!! $categorySection !!}
                 </div>
                 <div class="col-12 col-lg-4">
-                    {!! $categorySideSection !!}
+                    {{-- {!! $categorySideSection !!} --}}
                 </div>
             </div>
         </div>

@@ -13,4 +13,6 @@ interface ArticleRepositoryInterface
     public function getByCategory($id);
 
     public function getByLanguage($id);
+
+    public function paginate($perPage);
 }

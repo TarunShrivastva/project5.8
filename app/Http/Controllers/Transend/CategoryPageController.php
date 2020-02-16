@@ -51,27 +51,31 @@ class CategoryPageController extends Controller
         $contentName = isset($parameters['content'])?$parameters['content']:null;
         $categoryName = isset($parameters['category'])?$parameters['category']:null;
         $alias = $this->setLanguage();
-        $contentID  = $this->content->IdByContentTypeName($contentName);
-        $languageID = $this->language->IdByLanguageAlias($alias);
-        $categoryID = $this->category->IdByCategoryName($categoryName);
+        $contentId  = $this->content->IdByContentTypeName($contentName);
+        $languageId = $this->language->IdByLanguageAlias($alias);
+        $categoryId = $this->category->IdByCategoryName($categoryName);
         // $howToArticles = $this->howToArticles();
-        // $categoryContent = $this->categoryContent();
         // $categorySideSection = $this->categorySideContent();
-            if($categoryID){
-                $articles = $this->article->getByLanguage($languageID)->getByContent($contentID)->getByCategory($categoryID)->get();
-                return view('transend.content.category_content',compact('howToArticles','categorySection', 'categorySideSection','single'));
+        $categorySection = $this->categorySection($contentId, $categoryId, $languageId, 2);
+            if($categoryId){
+                return view('transend.content.category_content',compact('categorySection', 'categorySideSection','single'));
             }
-        $articles = $this->article->getByContent($contentID)->getByLanguage($languageID)->get();
-        return view('transend.content.category_content',compact('howToArticles','trendingArticles','categorySection', 'categorySideSection','single'));
-
-        
+        return view('transend.content.category_content',compact('howToArticles','trendingArticles','categorySection','single'));
     }
 
-    // public function categoryContent($content, $language, $category=null, $count=8, $single =0)
-    // {
-    //     $articles = Article::where('status','1')->where('content_id','=',$content[0]->id)->where('language_id','=',$language[0]->id)->with('author','content','category','language','comments')->paginate($count);
-    //     return view('contents.category_section',compact('articles', 'single'));
-    // }
+    public function categorySection($contentId, $categoryId, $languageId, $id=0, $single=0, $count=8)
+    {
+        $articles = [];
+        if($single ===1){
+            $articles = $this->article->getByLanguage($languageId)->getByContent($contentId)->getById($id);
+        }
+        elseif($categoryId === 0){
+            $articles = $this->article->getByLanguage($languageId)->getByContent($contentId)->paginate(10);
+        }elseif($categoryId){
+            $articles = $this->article->getByLanguage($languageId)->getByContent($contentId)->getByCategory($categoryId)->paginate(10);
+        }
+        return view('contents.category_section',compact('articles', 'single'));
+    }
 
     // public function categorySideContent()
     // {
